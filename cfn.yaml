@@ -51,6 +51,17 @@ Resources:
                            - 'ecr:PutImage'
                            - 'ecr:UploadLayerPart'
                         Resource: '*'
+            -
+               PolicyName: s3-cache
+               PolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                     -
+                        Effect: Allow
+                        Action:
+                           - 's3:GetObject'
+                           - 's3:PutObject'
+                        Resource: !Join [ '/', [ !GetAtt CacheBucket.Arn, '*' ] ]
    ContainerRepository:
       Type: 'AWS::ECR::Repository'
       Properties:
@@ -82,6 +93,21 @@ Resources:
                      - 'ecr:BatchCheckLayerAvailability'
    CacheBucket:
       Type: 'AWS::S3::Bucket'
+   CacheBucketPolicy:
+      Type: 'AWS::S3::BucketPolicy'
+      Properties:
+         Bucket: !Ref CacheBucket
+         PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+               -
+                  Effect: Allow
+                  Action:
+                     - 's3:GetObject'
+                     - 's3:PutObject'
+                  Resource: !Join [ '/', [ !GetAtt CacheBucket.Arn, '*' ] ]
+                  Principal:
+                     AWS: !GetAtt BuildRole.Arn
    BuildProject:
       Type: 'AWS::CodeBuild::Project'
       Properties:
