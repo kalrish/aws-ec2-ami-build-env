@@ -36,6 +36,21 @@ Resources:
                            - 'logs:CreateLogStream'
                            - 'logs:PutLogEvents'
                         Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/ami-build-env:*'
+            -
+               PolicyName: ecr
+               PolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                     -
+                        Effect: Allow
+                        Action:
+                           - 'ecr:BatchCheckLayerAvailability'
+                           - 'ecr:CompleteLayerUpload'
+                           - 'ecr:GetAuthorizationToken'
+                           - 'ecr:InitiateLayerUpload'
+                           - 'ecr:PutImage'
+                           - 'ecr:UploadLayerPart'
+                        Resource: '*'
    ContainerRepository:
       Type: 'AWS::ECR::Repository'
       Properties:
