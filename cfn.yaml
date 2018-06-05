@@ -80,6 +80,8 @@ Resources:
                      - 'ecr:GetDownloadUrlForLayer'
                      - 'ecr:BatchGetImage'
                      - 'ecr:BatchCheckLayerAvailability'
+   CacheBucket:
+      Type: 'AWS::S3::Bucket'
    BuildProject:
       Type: 'AWS::CodeBuild::Project'
       Properties:
@@ -101,5 +103,8 @@ Resources:
                   Name: REPOSITORY
                   Type: PLAINTEXT
                   Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/ami-build-env'
+         Cache:
+            Type: S3
+            Location: !Ref CacheBucket
          Artifacts:
             Type: NO_ARTIFACTS
