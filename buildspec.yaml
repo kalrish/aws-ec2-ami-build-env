@@ -8,8 +8,12 @@ phases:
    build:
       commands:
          - test ${PACKER_VERSION+x}
-         - curl -sS -o packer.zip "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip"
-         - unzip -q packer.zip
+         - if test ! -f "packer_${PACKER_VERSION}_linux_amd64.zip" ; then curl -sS -O "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" ; fi
+         - unzip -q packer_*.zip
          - docker build -t ami-build-env:latest .
          - docker tag ami-build-env "${REPOSITORY}"
          - docker push "${REPOSITORY}"
+
+cache:
+   paths:
+      - packer_*.zip
