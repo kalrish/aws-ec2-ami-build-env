@@ -1,0 +1,90 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+   BuildRole:
+      Type: 'AWS::IAM::Role'
+      Properties:
+         RoleName: ami-build-env-build
+         AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+               -
+                  Principal:
+                     Service: 'codebuild.amazonaws.com'
+                  Action: 'sts:AssumeRole'
+                  Effect: Allow
+         Policies:
+            -
+               PolicyName: codebuild
+               PolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                     -
+                        Effect: Allow
+                        Action:
+                           - 'codebuild:StartBuild'
+                        Resource: !Sub 'arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/ami-build-env'
+            -
+               PolicyName: logs
+               PolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                     -
+                        Effect: Allow
+                        Action:
+                           - 'logs:CreateLogGroup'
+                           - 'logs:CreateLogStream'
+                           - 'logs:PutLogEvents'
+                        Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/ami-build-env:*'
+   ContainerRepository:
+      Type: 'AWS::ECR::Repository'
+      Properties:
+         RepositoryName: ami-build-env
+         RepositoryPolicyText:
+            Version: '2012-10-17'
+            Statement:
+               -
+                  Sid: AllowPush
+                  Effect: Allow
+                  Principal:
+                     AWS:
+                        - !GetAtt BuildRole.Arn
+                  Action:
+                     - 'ecr:BatchCheckLayerAvailability'
+                     - 'ecr:CompleteLayerUpload'
+                     - 'ecr:GetAuthorizationToken'
+                     - 'ecr:InitiateLayerUpload'
+                     - 'ecr:PutImage'
+                     - 'ecr:UploadLayerPart'
+               -
+                  Sid: AllowPull
+                  Effect: Allow
+                  Principal:
+                     Service: codebuild.amazonaws.com
+                  Action:
+                     - 'ecr:GetDownloadUrlForLayer'
+                     - 'ecr:BatchGetImage'
+                     - 'ecr:BatchCheckLayerAvailability'
+   BuildProject:
+      Type: 'AWS::CodeBuild::Project'
+      Properties:
+         Name: ami-build-env
+         Description: 'AWS EC2 AMI build environment'
+         ServiceRole: !GetAtt BuildRole.Arn
+         Source:
+            Type: GITHUB
+            Location: 'https://github.com/kalrish/aws-ec2-ami-build-env.git'
+            GitCloneDepth: 1
+            BuildSpec: 'buildspec.yaml'
+         Environment:
+            Type: LINUX_CONTAINER
+            ComputeType: BUILD_GENERAL1_SMALL
+            Image: 'aws/codebuild/docker:17.09.0'
+            PrivilegedMode: true
+            EnvironmentVariables:
+               -
+                  Name: REPOSITORY
+                  Type: PLAINTEXT
+                  Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/ami-build-env'
+         Artifacts:
+            Type: NO_ARTIFACTS
