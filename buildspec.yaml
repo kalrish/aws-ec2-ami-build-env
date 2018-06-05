@@ -7,6 +7,7 @@ phases:
          - $(aws ecr get-login --no-include-email)
    build:
       commands:
+         - test ${PACKER_VERSION+x}
          - curl -sS -o packer.zip "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip"
          - unzip -q packer.zip
          - docker build -t ami-build-env:latest .
