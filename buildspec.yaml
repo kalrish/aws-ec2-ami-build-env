@@ -2,9 +2,6 @@
 version: 0.2
 
 phases:
-   pre_build:
-      commands:
-         - $(aws ecr get-login --no-include-email)
    build:
       commands:
          - test ${PACKER_VERSION+x}
@@ -13,6 +10,7 @@ phases:
          - unzip -q "packer_${PACKER_VERSION}_linux_amd64.zip"
          - docker build -t ami-build-env:latest .
          - docker tag ami-build-env "${REPOSITORY}"
+         - $(aws ecr get-login --no-include-email)
          - docker push "${REPOSITORY}"
 
 cache:
