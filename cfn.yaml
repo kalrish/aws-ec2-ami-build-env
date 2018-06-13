@@ -4,7 +4,6 @@ Resources:
    BuildRole:
       Type: 'AWS::IAM::Role'
       Properties:
-         RoleName: ami-build-env-build
          AssumeRolePolicyDocument:
             Version: '2012-10-17'
             Statement:
