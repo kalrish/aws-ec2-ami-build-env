@@ -6,7 +6,7 @@ RUN apt-get -qq update && apt-get -qq install --no-install-recommends python3 ru
 
 COPY packer /bin/
 
-ADD 'https://bootstrap.pypa.io/get-pip.py' '/tmp/get-pip.py'
+COPY get-pip.py /tmp/
 
 RUN python3 /tmp/get-pip.py && pip install ansible awscli
 

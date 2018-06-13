@@ -9,6 +9,7 @@ phases:
       commands:
          - test ${PACKER_VERSION+x}
          - if test ! -f "packer_${PACKER_VERSION}_linux_amd64.zip" ; then curl -sS -O "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" ; fi
+         - if test ! -f 'get-pip.py' ; then curl -sS -O 'https://bootstrap.pypa.io/get-pip.py' ; fi
          - unzip -q "packer_${PACKER_VERSION}_linux_amd64.zip"
          - docker build -t ami-build-env:latest .
          - docker tag ami-build-env "${REPOSITORY}"
@@ -16,4 +17,5 @@ phases:
 
 cache:
    paths:
+      - get-pip.py
       - packer_*.zip
