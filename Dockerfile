@@ -1,12 +1,10 @@
-FROM base/archlinux
+FROM alpine:latest
 
-RUN pacman --noconfirm -Sqyu python3 ruby && pacman --noconfirm -Sc
+RUN apk --no-cache add ansible python3 ruby
 
 COPY packer /bin/
 
-COPY get-pip.py /tmp/
-
-RUN python /tmp/get-pip.py && pip install --no-cache-dir ansible awscli
+RUN pip3 install --no-cache-dir awscli
 
 RUN gem install -N serverspec
 
