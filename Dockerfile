@@ -8,7 +8,7 @@ COPY packer /bin/
 
 COPY get-pip.py /tmp/
 
-RUN python3 /tmp/get-pip.py && pip install ansible awscli
+RUN python3 /tmp/get-pip.py && pip install --no-cache-dir ansible awscli
 
 RUN gem install -N serverspec
 
