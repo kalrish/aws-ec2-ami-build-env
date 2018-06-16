@@ -2,7 +2,7 @@ FROM debian:stable-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq update && apt-get -qq install --no-install-recommends jq openssh-client python3 ruby && apt-get -qq upgrade && apt-get autoremove && apt-get clean
+RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq -o=Dpkg::Use-Pty=0 install --no-install-recommends jq openssh-client python3 ruby && apt-get -qq -o=Dpkg::Use-Pty=0 upgrade && apt-get autoremove && apt-get clean
 
 COPY packer /bin/
 
