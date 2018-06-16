@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:sid-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
