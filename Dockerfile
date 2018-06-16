@@ -10,6 +10,6 @@ COPY get-pip.py /tmp/
 
 RUN python3 /tmp/get-pip.py && pip install --no-cache-dir ansible awscli
 
-RUN gem install -N serverspec
+RUN gem install -N --clear-sources serverspec
 
 RUN rm -rf -- /tmp/*
