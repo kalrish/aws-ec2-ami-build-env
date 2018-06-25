@@ -1,16 +1,20 @@
 ---
 version: 0.2
 
+env:
+   variables:
+      TAG: 'latest'
+
 phases:
    build:
       commands:
          - test ${PACKER_VERSION+x}
          - if test -f "packer_${PACKER_VERSION}_amd64" ; then ln -s -- "packer_${PACKER_VERSION}_amd64" packer ; else curl -sS -o packer.zip "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" ; unzip -q packer.zip ; ln -s -- packer "packer_${PACKER_VERSION}_amd64" ; fi
          - if test ! -f 'get-pip.py' ; then curl -sS -O 'https://bootstrap.pypa.io/get-pip.py' ; fi
-         - docker build -t ami-build-env:latest .
-         - docker tag ami-build-env "${REPOSITORY}"
+         - docker build -t "ami-build-env:${TAG}" .
+         - docker tag "ami-build-env:${TAG}" "${REPOSITORY}:${TAG}"
          - $(aws ecr get-login --no-include-email)
-         - docker push "${REPOSITORY}"
+         - docker push "${REPOSITORY}:${TAG}"
 
 cache:
    paths:
