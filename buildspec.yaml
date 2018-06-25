@@ -6,6 +6,9 @@ env:
       TAG: 'latest'
 
 phases:
+   install:
+      commands:
+         - DEBIAN_FRONTEND=noninteractive apt-get -qq install jq
    build:
       commands:
          - if test -z ${PACKER_VERSION+x} ; then PACKER_VERSION="$(curl -sS 'https://checkpoint-api.hashicorp.com/v1/check/packer' | jq -r '.current_version')" ; fi
