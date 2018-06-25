@@ -1,6 +1,6 @@
 FROM debian:sid-slim
 
-ENV DEBIAN_FRONTEND=noninteractive PACKER_NO_COLOR=1
+ENV DEBIAN_FRONTEND=noninteractive PACKER_LOG=1 PACKER_NO_COLOR=1
 
 RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq -o=Dpkg::Use-Pty=0 install --no-install-recommends curl jq openssh-client python3.5 ruby && apt-get -qq -o=Dpkg::Use-Pty=0 upgrade && apt-get -qq autoremove && apt-get -qq clean
 
