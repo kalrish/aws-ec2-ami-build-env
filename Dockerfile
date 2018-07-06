@@ -8,7 +8,9 @@ COPY packer /bin/
 
 COPY get-pip.py /tmp/
 
-RUN python3.5 /tmp/get-pip.py && pip install --no-cache-dir ansible awscli
+ARG ansible_version
+
+RUN python3.5 /tmp/get-pip.py && pip install --no-cache-dir ansible${ansible_version:+==$ansible_version} awscli
 
 RUN gem install -N --clear-sources serverspec
 
