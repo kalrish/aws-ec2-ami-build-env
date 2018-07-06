@@ -17,7 +17,7 @@ phases:
             if test -f "packer_${PACKER_VERSION}_linux_amd64"
             then
                echo 'Retrieved Packer executable from cache'
-               ln -s -- "packer_${PACKER_VERSION}_linux_amd64" packer
+               ln -vs -- "packer_${PACKER_VERSION}_linux_amd64" packer
             else
                curl -sS -o packer-checksums.txt "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS"
                curl -sS -o packer-checksums.sig "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS.sig"
@@ -26,7 +26,7 @@ phases:
                # The coreutils package in the build container is too old and sha256sum doesn't support --ignore-missing, so irrelevant entries in the checksums file must be filtered out
                sed -e '/\s*packer_.*_linux_amd64\.zip$/!d' packer-checksums.txt | sha256sum -c --strict
                unzip -q "packer_${PACKER_VERSION}_linux_amd64.zip"
-               ln -s -- packer "packer_${PACKER_VERSION}_linux_amd64"
+               ln -vs -- packer "packer_${PACKER_VERSION}_linux_amd64"
             fi
          - docker build --build-arg "ansible_version=${ANSIBLE_VERSION}" --build-arg "serverspec_version=${SERVERSPEC_VERSION}" -t "ami-build-env:${TAG}" .
          - docker tag "ami-build-env:${TAG}" "${REPOSITORY}:${TAG}"
