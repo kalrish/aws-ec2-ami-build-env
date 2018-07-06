@@ -28,7 +28,7 @@ phases:
                unzip -q "packer_${PACKER_VERSION}_linux_amd64.zip"
                ln -s -- packer "packer_${PACKER_VERSION}_linux_amd64"
             fi
-         - docker build --build-arg "ansible_version=${ANSIBLE_VERSION}" -t "ami-build-env:${TAG}" .
+         - docker build --build-arg "ansible_version=${ANSIBLE_VERSION}" --build-arg "serverspec_version=${SERVERSPEC_VERSION}" -t "ami-build-env:${TAG}" .
          - docker tag "ami-build-env:${TAG}" "${REPOSITORY}:${TAG}"
          - $(aws ecr get-login --no-include-email)
          - docker push "${REPOSITORY}:${TAG}"
