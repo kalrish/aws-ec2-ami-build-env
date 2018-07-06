@@ -13,13 +13,13 @@ phases:
       commands:
          - if test -z ${PACKER_VERSION+x} ; then PACKER_VERSION="$(curl -sS 'https://checkpoint-api.hashicorp.com/v1/check/packer' | jq -r '.current_version')" ; fi
          - |
-            if test -f "packer_${PACKER_VERSION}_amd64"
+            if test -f "packer_${PACKER_VERSION}_linux_amd64"
             then
-               ln -s -- "packer_${PACKER_VERSION}_amd64" packer
+               ln -s -- "packer_${PACKER_VERSION}_linux_amd64" packer
             else
-               curl -sS -o packer.zip "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip"
-               unzip -q packer.zip
-               ln -s -- packer "packer_${PACKER_VERSION}_amd64"
+               curl -sS -O "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip"
+               unzip -q "packer_${PACKER_VERSION}_linux_amd64.zip"
+               ln -s -- packer "packer_${PACKER_VERSION}_linux_amd64"
             fi
          - docker build -t "ami-build-env:${TAG}" .
          - docker tag "ami-build-env:${TAG}" "${REPOSITORY}:${TAG}"
@@ -28,4 +28,4 @@ phases:
 
 cache:
    paths:
-      - packer_*_amd64
+      - packer_*_linux_amd64
