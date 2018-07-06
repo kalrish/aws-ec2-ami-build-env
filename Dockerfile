@@ -10,6 +10,8 @@ ARG ansible_version
 
 RUN pip3 install --no-cache-dir ansible${ansible_version:+==$ansible_version} awscli
 
-RUN gem install -N --clear-sources serverspec
+ARG serverspec_version
+
+RUN gem install -N --clear-sources serverspec${serverspec_version:+:$serverspec_version}
 
 RUN rm -rf -- /tmp/*
