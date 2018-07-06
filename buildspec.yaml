@@ -8,6 +8,7 @@ env:
 phases:
    install:
       commands:
+         - gpg --import -- hashicorp.asc
          - if test -z ${PACKER_VERSION+x} ; then DEBIAN_FRONTEND=noninteractive apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get -qq install jq ; fi
    build:
       commands:
