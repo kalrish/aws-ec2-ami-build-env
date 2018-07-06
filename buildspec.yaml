@@ -16,6 +16,7 @@ phases:
          - |
             if test -f "packer_${PACKER_VERSION}_linux_amd64"
             then
+               echo 'Retrieved Packer executable from cache'
                ln -s -- "packer_${PACKER_VERSION}_linux_amd64" packer
             else
                curl -sS -o packer-checksums.txt "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_SHA256SUMS"
