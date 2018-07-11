@@ -1,14 +1,14 @@
-FROM debian:sid-slim
+FROM alpine:edge
 
-ENV DEBIAN_FRONTEND=noninteractive PACKER_NO_COLOR=1 ANSIBLE_HOST_KEY_CHECKING=False
-
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq -o=Dpkg::Use-Pty=0 install --no-install-recommends curl jq netcat-openbsd openssh-client python3.5 python3-pip python3-setuptools ruby && apt-get -qq -o=Dpkg::Use-Pty=0 upgrade && apt-get -qq autoremove && apt-get -qq clean
-
-COPY packer /bin/
+ENV PACKER_NO_COLOR=1 ANSIBLE_HOST_KEY_CHECKING=False
 
 ARG ansible_version
 
-RUN pip3 install --no-cache-dir ansible${ansible_version:+==$ansible_version} awscli
+RUN { for BRANCH in v3.3 v3.4 v3.5 v3.6 v3.7 v3.8 edge ; do echo "http://dl-cdn.alpinelinux.org/alpine/${BRANCH}/main" ; done && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" ; } >> /etc/apk/repositories
+
+RUN apk --no-cache add ansible${ansible_version:+=$ansible_version} aws-cli curl git jq openssh-client netcat-openbsd ruby unzip
+
+COPY packer /bin/
 
 ARG serverspec_version
 
